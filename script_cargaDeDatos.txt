@@ -1,0 +1,36 @@
+Justificación técnica para la carga: Debido a las inconsistencias del Excel (ej: "Aceros del Norte S.A.S", "Aceros del Norte", "ACEROS NORTE"), decidi realizar una limpieza previa en los INSERT para unificar nombres y asegurar la integridad referencial.
+
+-- Limpieza y Carga de Catálogos
+INSERT INTO riwi_city (city_name) VALUES ('Cartagena'), ('Barranquilla'), ('Santa Marta');
+INSERT INTO riwi_category (category_name) VALUES ('Herramienta'), ('Consumible'), ('EPP');
+
+-- Limpieza y Carga de Maestros (Nombres unificados)
+INSERT INTO riwi_supplier (supplier_name, city_id) VALUES 
+('Aceros del Norte S.A.S', 1), 
+('Industriales S.A.S', 2), 
+('Suministros Global SAS', 3);
+
+INSERT INTO riwi_warehouse (warehouse_name, city_id) VALUES 
+('Bodega Costa', 3), 
+('Centro Logistico Norte', 1), 
+('Bodega Central', 2);
+
+INSERT INTO riwi_product (product_name, category_id) VALUES 
+('Disco de Corte 4.5', 1), 
+('Electrodo E6013', 2), 
+('Guante Nitrilo', 3), 
+('Casco Industrial', 3);
+
+-- Carga de Compras (Se extraen los PO únicos del Excel y se asocian al proveedor)
+INSERT INTO riwi_purchase (po_number, supplier_id) VALUES 
+('PO-1049', 1), ('PO-1041', 1), ('PO-1022', 2), ('PO-1075', 1), 
+('PO-1091', 2), ('PO-1059', 1), ('PO-1035', 2), ('PO-1032', 3), 
+('PO-1009', 3), ('PO-1040', 1), ('PO-1023', 1), ('PO-1029', 2), 
+('PO-1094', 2), ('PO-1034', 2), ('PO-1043', 2), ('PO-1083', 1), ('PO-1036', 1);
+
+-- Carga de Movimientos (Ejemplo con los primeros 3 registros del Excel)
+-- Nota: purchase_id 1 = PO-1049, purchase_id 2 = PO-1041, etc.
+INSERT INTO riwi_movement (movement_date, purchase_id, warehouse_id, product_id, quantity, unit_price, movement_type) VALUES
+('2026-04-01', 1, 1, 1, 148, 115388.00, 'OUT'),
+('2026-02-14', 2, 1, 2, 27, 35506.00, 'IN'),
+('2026-01-01', 3, 1, 3, 70, 14290.00, 'IN');

@@ -1,0 +1,58 @@
+-- CONSULTA 1: Stock disponible por producto
+SELECT 
+    p.product_name,
+    SUM(CASE WHEN m.movement_type = 'IN' THEN m.quantity ELSE 0 END) AS total_ingresos,
+    SUM(CASE WHEN m.movement_type = 'OUT' THEN m.quantity ELSE 0 END) AS total_salidas,
+    SUM(CASE WHEN m.movement_type = 'IN' THEN m.quantity ELSE -m.quantity END) AS stock_disponible
+FROM riwi_product p
+JOIN riwi_movement m ON p.product_id = m.product_id
+GROUP BY p.product_name;
+
+-- CONSULTA 2: Movimientos de inventario con detalle de producto y bodega
+SELECT 
+    w.warehouse_name,
+    p.product_name,
+    m.movement_date,
+    m.movement_type,
+    m.quantity
+FROM riwi_movement m
+JOIN riwi_warehouse w ON m.warehouse_id = w.warehouse_id
+JOIN riwi_product p ON m.product_id = p.product_id
+ORDER BY w.warehouse_name, m.movement_date DESC;
+
+-- CONSULTA 3: Total comprado por proveedor
+SELECT 
+    s.supplier_name,
+    SUM(m.quantity * m.unit_price) AS total_comprado
+FROM riwi_supplier s
+JOIN riwi_purchase pur ON s.supplier_id = pur.supplier_id
+JOIN riwi_movement m ON pur.purchase_id = m.purchase_id
+GROUP BY s.supplier_name;
+
+-- CONSULTA 4: Cantidad de movimientos registrados por bodega
+SELECT 
+    w.warehouse_name,
+    COUNT(m.movement_id) AS cantidad_movimientos
+FROM riwi_warehouse w
+JOIN riwi_movement m ON w.warehouse_id = m.warehouse_id
+GROUP BY w.warehouse_name
+ORDER BY cantidad_movimientos DESC;
+
+-- CONSULTA 5: Producto con mayor volumen de compras
+SELECT 
+    p.product_name,
+    SUM(m.quantity) AS volumen_total
+FROM riwi_product p
+JOIN riwi_movement m ON p.product_id = m.product_id
+JOIN riwi_purchase pur ON m.purchase_id = pur.purchase_id
+GROUP BY p.product_name
+ORDER BY volumen_total DESC
+LIMIT 1;
+
+-- CONSULTA 6: Valor total del inventario almacenado por bodega
+SELECT 
+    w.warehouse_name,
+    SUM(m.quantity * m.unit_price) AS valor_economico_inventario
+FROM riwi_warehouse w
+JOIN riwi_movement m ON w.warehouse_id = m.warehouse_id
+GROUP BY w.warehouse_name;

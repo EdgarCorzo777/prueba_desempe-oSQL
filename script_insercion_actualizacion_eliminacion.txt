@@ -1,0 +1,15 @@
+-- INSERCIÓN: Registrar un nuevo proveedor y producto asociado
+INSERT INTO riwi_supplier (supplier_name, city_id) 
+VALUES ('Materiales Mbappe', 2);
+
+INSERT INTO riwi_product (product_name, category_id) 
+VALUES ('Madera', 1);
+
+-- ACTUALIZACIÓN: Modificar información de un proveedor existente
+UPDATE riwi_supplier 
+SET supplier_name = 'Hierro duro (Actualizado)' 
+WHERE supplier_id = 1;
+
+-- ELIMINACIÓN: Eliminar un producto que no tenga movimientos asociados
+DELETE FROM riwi_product 
+WHERE product_name = 'Madera';
