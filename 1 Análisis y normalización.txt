@@ -1,0 +1,19 @@
+1. Análisis y normalización
+
+Proveedores duplicados con distintos formatos: Se encuentran registros como "Aceros del Norte S.A.S", "Aceros del Norte" y "ACEROS NORTE" que corresponden al mismo proveedor. Lo mismo ocurre con "Industriales SAS" e "INDUSTRIALES SAS".
+
+Ciudades mal escritas o abreviadas: "Barranquilla", "Barranquila" y "B/quilla" son la misma ciudad. También hay variaciones como "Ctg" (Cartagena) y "Sta Marta" (Santa Marta).
+
+Bodegas con nombres inconsistentes: "Bodega Central" y "Bod. Central" refieren a la misma ubicación.
+
+Productos y Categorías redundantes: El producto "Electrodo E6013" también aparece como "Soldadura E6013". Las categorías sufren de plural/singular inconsistente ("Herramienta" / "Herramientas", "Consumible" / "Consumibles") y variaciones como "EPP" y "Elementos Protección".
+
+Redundancia de datos: La ciudad del proveedor y de la bodega se repiten en cada fila de movimiento, lo que genera inconsistencias si se actualiza un nombre en un lado pero no en otro.
+
+0FN (Estado Original): El Excel es una sola tabla gigante con datos repetidos (Ej: "Cartagena" y "Ctg", "Industriales SAS" y "INDUSTRIALES SAS").
+
+1FN: Se eliminan las celdas múltiples, garantizando que cada columna tenga un solo valor atómico. (El Excel ya venía así en este aspecto).
+
+2FN: Se quitan los datos que dependían parcialmente de la clave (En este caso la fecha y la orden de compra). Se separan los maestros: Ciudad, Proveedor, Producto, Categoría y Bodega en sus propias tablas, conectando el movimiento mediante IDs (Claves Foráneas).
+
+3FN: Se elimina la dependencia transicional. El nombre de la ciudad del proveedor no va en la tabla del proveedor, sino que se crea la tabla riwi_city y el proveedor solo guarda el city_id. Esto evita que si cambiamos el nombre de una ciudad, tengamos que actualizar miles de registros.
